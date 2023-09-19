@@ -9,5 +9,4 @@ public class TelrosAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TelrosAppApplication.class, args);
 	}
-
 }
