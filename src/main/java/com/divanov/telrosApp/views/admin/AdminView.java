@@ -2,7 +2,9 @@ package com.divanov.telrosApp.views.admin;
 
 import com.divanov.telrosApp.entities.UserApp;
 import com.divanov.telrosApp.services.UserService;
-import com.divanov.telrosApp.views.component.UserAppDialog;
+import com.divanov.telrosApp.views.component.AddNewUserDialog;
+import com.divanov.telrosApp.views.component.UserAppEditDataForm;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -11,6 +13,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
+import java.util.Collections;
 
 /**
  * method addClassName makes it easier to styling components using CSS
@@ -21,7 +25,8 @@ import com.vaadin.flow.router.Route;
 public class AdminView extends VerticalLayout {
     Grid<UserApp> grid = new Grid<>(UserApp.class);
     TextField filterText = new TextField();
-    UserAppDialog dialog;
+    UserAppEditDataForm form;
+    AddNewUserDialog dialog;
     UserService service;
 
     public AdminView(UserService service) {
@@ -29,11 +34,10 @@ public class AdminView extends VerticalLayout {
         addClassName("list-view");
         setSizeFull();
         configureGrid();
+        configureForm();
         configureDialog();
 
-        add(getToolBar(), grid);
-        updateList();
-        clearDialog();
+        add(getToolBar(), getContent());
     }
 
     private void configureGrid() {
@@ -41,22 +45,15 @@ public class AdminView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "patronymic", "dateOfBirth", "email", "phone");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-        grid.asSingleSelect().addValueChangeListener(event -> editUserData(event.getValue()));
-    }
-
-    private void configureDialog() {
-        dialog = new UserAppDialog(service.findAllRoles());
-        dialog.setDraggable(true);
-        dialog.setResizable(true);
+//        grid.asSingleSelect().addValueChangeListener(event -> editUserData(event.getValue()));
     }
 
     private HorizontalLayout getToolBar() {
         filterText.setPlaceholder("First or Last name");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
-        filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("New user", e -> addUser());
+        Button addContactButton = new Button("New user", e -> dialog.open());
 
         var toolbar = new HorizontalLayout(filterText, addContactButton);
 
@@ -64,28 +61,21 @@ public class AdminView extends VerticalLayout {
         return toolbar;
     }
 
-    private void editUserData(UserApp userApp) {
-        if (userApp == null) {
-            clearDialog();
-        }
-        dialog.setUserApp(userApp);
-        dialog.open();
-        addClassName("editing");
+    private Component getContent() {
+        HorizontalLayout content = new HorizontalLayout(grid, form);
+        content.setFlexGrow(2, grid);
+        content.setFlexGrow(1, form);
+        content.addClassNames("content");
+        content.setSizeFull();
+        return content;
     }
 
-    private void clearDialog() {
-        dialog.setUserApp(null);
-        dialog.close();
-        removeClassName("editing");
+    private void configureForm() {
+        form = new UserAppEditDataForm(Collections.emptyList());
+        form.setWidth("25em");
     }
 
-    private void addUser() {
-        grid.asSingleSelect().clear();
-        editUserData(new UserApp());
-    }
-
-
-    private void updateList() {
-        grid.setItems(service.findAllUsers(filterText.getValue()));
+    private void configureDialog() {
+        dialog = new AddNewUserDialog(Collections.emptyList());
     }
 }

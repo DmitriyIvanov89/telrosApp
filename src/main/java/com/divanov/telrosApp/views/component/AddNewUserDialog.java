@@ -20,10 +20,9 @@ import lombok.Getter;
 
 import java.util.List;
 
-public class UserAppDialog extends Dialog {
-    //TO DO вынести нициализацию полей в метод createLayout();
+public class AddNewUserDialog extends Dialog {
     TextField userName = new TextField("Username");
-    PasswordField password = new PasswordField("Tmp user password");
+    PasswordField password = new PasswordField("Password");
     TextField firstName = new TextField("First Name");
     TextField lastName = new TextField("Last Name");
     TextField patronymic = new TextField("Patronymic");
@@ -33,15 +32,15 @@ public class UserAppDialog extends Dialog {
     ComboBox<Role> role = new ComboBox<>("Role");
     Binder<UserApp> binder = new BeanValidationBinder<>(UserApp.class);
 
-    public UserAppDialog(List<Role> roles) {
-        setClassName("addNewUser-dialog");
-        setHeaderTitle("Add new user");
-        binder.bindInstanceFields(this);
+    public AddNewUserDialog(List<Role> roles) {
+        setClassName("addNewUserDialog");
+        setHeaderTitle("Add New User");
+        add(createLayout());
         role.setItems(roles);
         role.setItemLabelGenerator(Role::getName);
-        getFooter().add(createCanselButton(this));
         getFooter().add(createSaveButton());
-        add(createLayout());
+        getFooter().add(createCancelButton(this));
+        setResizable(true);
     }
 
     private FormLayout createLayout() {
@@ -53,7 +52,19 @@ public class UserAppDialog extends Dialog {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickShortcut(Key.ENTER);
         save.addClickListener(event -> validateAndSave());
+        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return save;
+    }
+
+    private Button createCancelButton(Dialog dialog) {
+        Button cancel = new Button("Cancel", e -> dialog.close());
+        cancel.addClickShortcut(Key.ESCAPE);
+        cancel.addClickListener(event -> fireEvent(new CancelEvent(this)));
+        return cancel;
+    }
+
+    public void setUserApp(UserApp userApp) {
+        binder.setBean(userApp);
     }
 
     private void validateAndSave() {
@@ -62,46 +73,34 @@ public class UserAppDialog extends Dialog {
         }
     }
 
-    private Button createCanselButton(Dialog dialog) {
-        Button close = new Button("Cancel", e -> dialog.close());
-        close.addClickShortcut(Key.ESCAPE);
-        close.addClickListener(event -> fireEvent(new CloseEvent(this)));
-        return close;
-    }
-
-    public void setUserApp(UserApp userApp) {
-        binder.setBean(userApp);
-    }
-
+    //Events
     @Getter
-    public static abstract class AddNewUserDialogEvent extends ComponentEvent<UserAppDialog> {
+    public static abstract class BasicDialogEvent extends ComponentEvent<AddNewUserDialog> {
         private final UserApp userApp;
 
-        protected AddNewUserDialogEvent(UserAppDialog source, UserApp userApp) {
+        protected BasicDialogEvent(AddNewUserDialog source, UserApp userApp) {
             super(source, false);
             this.userApp = userApp;
         }
-
     }
 
-    public static class SaveEvent extends AddNewUserDialogEvent {
-        SaveEvent(UserAppDialog source, UserApp userApp) {
+    public static class SaveEvent extends BasicDialogEvent {
+        SaveEvent(AddNewUserDialog source, UserApp userApp) {
             super(source, userApp);
         }
     }
 
-    public static class CloseEvent extends AddNewUserDialogEvent {
-        CloseEvent(UserAppDialog source) {
+    public static class CancelEvent extends BasicDialogEvent {
+        CancelEvent(AddNewUserDialog source) {
             super(source, null);
         }
     }
 
     public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
         return addListener(SaveEvent.class, listener);
-
     }
 
-    public Registration addCloseListener(ComponentEventListener<CloseEvent> listener) {
-        return addListener(CloseEvent.class, listener);
+    public Registration addCloseListener(ComponentEventListener<CancelEvent> listener) {
+        return addListener(CancelEvent.class, listener);
     }
 }
