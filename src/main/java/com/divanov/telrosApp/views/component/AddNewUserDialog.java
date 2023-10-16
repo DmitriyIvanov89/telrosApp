@@ -15,9 +15,11 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
 
 public class AddNewUserDialog extends Dialog {
@@ -30,17 +32,20 @@ public class AddNewUserDialog extends Dialog {
     TextField dateOfBirth = new TextField("Date of Birth");
     TextField phone = new TextField("Phone");
     ComboBox<Role> role = new ComboBox<>("Role");
+
     Binder<UserApp> binder = new BeanValidationBinder<>(UserApp.class);
 
     public AddNewUserDialog(List<Role> roles) {
         setClassName("addNewUserDialog");
         setHeaderTitle("Add New User");
-        add(createLayout());
+        binder.bindInstanceFields(this);
         role.setItems(roles);
         role.setItemLabelGenerator(Role::getName);
         getFooter().add(createSaveButton());
         getFooter().add(createCancelButton(this));
         setResizable(true);
+        setDraggable(true);
+        add(createLayout());
     }
 
     private FormLayout createLayout() {
@@ -52,14 +57,12 @@ public class AddNewUserDialog extends Dialog {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickShortcut(Key.ENTER);
         save.addClickListener(event -> validateAndSave());
-        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
         return save;
     }
 
     private Button createCancelButton(Dialog dialog) {
         Button cancel = new Button("Cancel", e -> dialog.close());
         cancel.addClickShortcut(Key.ESCAPE);
-        cancel.addClickListener(event -> fireEvent(new CancelEvent(this)));
         return cancel;
     }
 
@@ -68,39 +71,42 @@ public class AddNewUserDialog extends Dialog {
     }
 
     private void validateAndSave() {
-        if (binder.isValid()) {
-            fireEvent(new SaveEvent(this, binder.getBean()));
+        UserApp userApp = new UserApp();
+        userApp.setUsername(userName.getValue());
+        userApp.setPassword(password.getValue());
+        userApp.setPatronymic(patronymic.getValue());
+        userApp.setDateOfBirth(dateOfBirth.getValue());
+        userApp.setEmail(email.getValue());
+        userApp.setPhone(phone.getValue());
+        userApp.setRoles(Collections.emptyList());
+
+        try {
+            binder.writeBean(userApp);
+        } catch (ValidationException e) {
+            throw new RuntimeException(e);
         }
+        fireEvent(new SaveEvent(this, userApp));
     }
 
     //Events
     @Getter
-    public static abstract class BasicDialogEvent extends ComponentEvent<AddNewUserDialog> {
+    public static abstract class AddNewUserDialogEvent extends ComponentEvent<AddNewUserDialog> {
         private final UserApp userApp;
 
-        protected BasicDialogEvent(AddNewUserDialog source, UserApp userApp) {
+        protected AddNewUserDialogEvent(AddNewUserDialog source, UserApp userApp) {
             super(source, false);
             this.userApp = userApp;
         }
     }
 
-    public static class SaveEvent extends BasicDialogEvent {
+    public static class SaveEvent extends AddNewUserDialogEvent {
         SaveEvent(AddNewUserDialog source, UserApp userApp) {
             super(source, userApp);
-        }
-    }
-
-    public static class CancelEvent extends BasicDialogEvent {
-        CancelEvent(AddNewUserDialog source) {
-            super(source, null);
         }
     }
 
     public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
         return addListener(SaveEvent.class, listener);
     }
-
-    public Registration addCloseListener(ComponentEventListener<CancelEvent> listener) {
-        return addListener(CancelEvent.class, listener);
-    }
 }
+

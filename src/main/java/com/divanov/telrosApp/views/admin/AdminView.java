@@ -38,6 +38,8 @@ public class AdminView extends VerticalLayout {
         configureDialog();
 
         add(getToolBar(), getContent());
+        updateList();
+        closeEditor();
     }
 
     private void configureGrid() {
@@ -45,17 +47,20 @@ public class AdminView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "patronymic", "dateOfBirth", "email", "phone");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-//        grid.asSingleSelect().addValueChangeListener(event -> editUserData(event.getValue()));
+
+        grid.asSingleSelect().addValueChangeListener(event -> editUserData(event.getValue()));
+
     }
 
     private HorizontalLayout getToolBar() {
         filterText.setPlaceholder("First or Last name");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        filterText.addValueChangeListener(e -> updateList());
 
-        Button addContactButton = new Button("New user", e -> dialog.open());
+        Button addNewUserButton = new Button("New user", e -> dialog.open());
 
-        var toolbar = new HorizontalLayout(filterText, addContactButton);
+        var toolbar = new HorizontalLayout(filterText, addNewUserButton);
 
         toolbar.addClassName("toolbar");
         return toolbar;
@@ -73,9 +78,51 @@ public class AdminView extends VerticalLayout {
     private void configureForm() {
         form = new UserAppEditDataForm(Collections.emptyList());
         form.setWidth("25em");
+        form.addSaveListener(this::saveUserForm);
+        form.addDeleteListener(this::deleteUserForm);
+        form.addCancelListener(e -> closeEditor());
+    }
+
+    private void saveUserForm(UserAppEditDataForm.SaveEvent event) {
+        service.saveUser(event.getUserApp());
+        updateList();
+        closeEditor();
+    }
+
+    private void deleteUserForm(UserAppEditDataForm.DeleteEvent event) {
+        service.deleteUser(event.getUserApp());
+        updateList();
+        closeEditor();
     }
 
     private void configureDialog() {
-        dialog = new AddNewUserDialog(Collections.emptyList());
+        dialog = new AddNewUserDialog(service.findAllRoles());
+        dialog.addSaveListener(this::saveNewUserDialog);
+    }
+
+    private void closeEditor() {
+        form.setUser(null);
+        form.setVisible(false);
+        removeClassName("editing");
+    }
+
+    private void editUserData(UserApp userApp) {
+        if (userApp == null) {
+            closeEditor();
+        } else {
+            form.setUser(userApp);
+            form.setVisible(true);
+            addClassName("editing");
+        }
+    }
+
+    private void saveNewUserDialog(AddNewUserDialog.SaveEvent event) {
+        service.saveUser(event.getUserApp());
+        updateList();
+        dialog.close();
+    }
+
+    private void updateList() {
+        grid.setItems(service.findAllUsers(filterText.getValue()));
     }
 }
