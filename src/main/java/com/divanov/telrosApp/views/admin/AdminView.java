@@ -14,8 +14,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import java.util.Collections;
-
 /**
  * method addClassName makes it easier to styling components using CSS
  */
@@ -76,7 +74,7 @@ public class AdminView extends VerticalLayout {
     }
 
     private void configureForm() {
-        form = new UserAppEditDataForm(Collections.emptyList());
+        form = new UserAppEditDataForm(service.findAllRoles());
         form.setWidth("25em");
         form.addSaveListener(this::saveUserForm);
         form.addDeleteListener(this::deleteUserForm);

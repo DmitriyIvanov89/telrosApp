@@ -66,10 +66,6 @@ public class AddNewUserDialog extends Dialog {
         return cancel;
     }
 
-    public void setUserApp(UserApp userApp) {
-        binder.setBean(userApp);
-    }
-
     private void validateAndSave() {
         UserApp userApp = new UserApp();
         userApp.setUsername(userName.getValue());
@@ -80,12 +76,14 @@ public class AddNewUserDialog extends Dialog {
         userApp.setPhone(phone.getValue());
         userApp.setRoles(Collections.emptyList());
 
-        try {
-            binder.writeBean(userApp);
-        } catch (ValidationException e) {
-            throw new RuntimeException(e);
+        if (binder.isValid()) {
+            try {
+                binder.writeBean(userApp);
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+            fireEvent(new SaveEvent(this, userApp));
         }
-        fireEvent(new SaveEvent(this, userApp));
     }
 
     //Events
