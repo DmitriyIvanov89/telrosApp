@@ -13,6 +13,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * method addClassName makes it easier to styling components using CSS
@@ -20,6 +21,7 @@ import com.vaadin.flow.router.Route;
 
 @Route(value = "")
 @PageTitle("Admin dashboard")
+@Slf4j
 public class AdminView extends VerticalLayout {
     Grid<UserApp> grid = new Grid<>(UserApp.class);
     TextField filterText = new TextField();
@@ -57,6 +59,7 @@ public class AdminView extends VerticalLayout {
         filterText.addValueChangeListener(e -> updateList());
 
         Button addNewUserButton = new Button("New user", e -> dialog.open());
+        addNewUserButton.addClickListener(e -> addNewUser());
 
         var toolbar = new HorizontalLayout(filterText, addNewUserButton);
 
@@ -93,11 +96,6 @@ public class AdminView extends VerticalLayout {
         closeEditor();
     }
 
-    private void configureDialog() {
-        dialog = new AddNewUserDialog(service.findAllRoles());
-        dialog.addSaveListener(this::saveNewUserDialog);
-    }
-
     private void closeEditor() {
         form.setUser(null);
         form.setVisible(false);
@@ -114,10 +112,34 @@ public class AdminView extends VerticalLayout {
         }
     }
 
+    /**
+     * Create and config dialog component
+     * only fot add new user
+     */
+
+    private void configureDialog() {
+        dialog = new AddNewUserDialog(service.findAllRoles());
+        dialog.addListener(AddNewUserDialog.SaveEvent.class, this::saveNewUserDialog);
+    }
+
     private void saveNewUserDialog(AddNewUserDialog.SaveEvent event) {
         service.saveUser(event.getUserApp());
         updateList();
         dialog.close();
+    }
+
+    private void addNewUser() {
+        complicateNewUser(new UserApp());
+    }
+
+    private void complicateNewUser(UserApp userApp) {
+        if (userApp == null) {
+            dialog.setUser(null);
+            dialog.close();
+        } else {
+            dialog.setUser(userApp);
+            dialog.setVisible(true);
+        }
     }
 
     private void updateList() {

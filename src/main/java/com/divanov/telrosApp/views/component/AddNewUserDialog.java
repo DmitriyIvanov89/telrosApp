@@ -19,10 +19,11 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 
 public class AddNewUserDialog extends Dialog {
+    UserApp userApp;
+
     TextField userName = new TextField("Username");
     PasswordField password = new PasswordField("Password");
     TextField firstName = new TextField("First Name");
@@ -57,6 +58,9 @@ public class AddNewUserDialog extends Dialog {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickShortcut(Key.ENTER);
         save.addClickListener(event -> validateAndSave());
+
+        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
+
         return save;
     }
 
@@ -67,23 +71,20 @@ public class AddNewUserDialog extends Dialog {
     }
 
     private void validateAndSave() {
-        UserApp userApp = new UserApp();
-        userApp.setUsername(userName.getValue());
-        userApp.setPassword(password.getValue());
-        userApp.setPatronymic(patronymic.getValue());
-        userApp.setDateOfBirth(dateOfBirth.getValue());
-        userApp.setEmail(email.getValue());
-        userApp.setPhone(phone.getValue());
-        userApp.setRoles(Collections.emptyList());
-
-        if (binder.isValid()) {
-            try {
-                binder.writeBean(userApp);
-            } catch (ValidationException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            binder.writeBean(userApp);
             fireEvent(new SaveEvent(this, userApp));
+        } catch (ValidationException e) {
+            e.printStackTrace();
         }
+    }
+
+    //    public void setUser(UserApp user) {
+//        binder.setBean(user);
+//    }
+    public void setUser(UserApp userApp) {
+        this.userApp = userApp;
+        binder.readBean(userApp);
     }
 
     //Events
@@ -103,8 +104,12 @@ public class AddNewUserDialog extends Dialog {
         }
     }
 
-    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
-        return addListener(SaveEvent.class, listener);
+//    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
+//        return addListener(SaveEvent.class, listener);
+//    }
+
+    public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
+        return getEventBus().addListener(eventType, listener);
     }
 }
 
