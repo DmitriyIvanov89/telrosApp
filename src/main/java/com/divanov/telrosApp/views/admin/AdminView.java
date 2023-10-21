@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Route(value = "")
 @PageTitle("Admin dashboard")
-@Slf4j
 public class AdminView extends VerticalLayout {
     Grid<UserApp> grid = new Grid<>(UserApp.class);
     TextField filterText = new TextField();

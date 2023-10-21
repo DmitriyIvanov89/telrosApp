@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,12 +39,16 @@ public class UserApp {
     @Column(name = "phone")
     private String phone;
 
+//    @ManyToMany
+//    @JoinTable(
+//            name = "users_roles",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id")
+//    )
+//    @NotNull
+//    private Collection<Role> roles;
+
     @ManyToMany
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
     @NotNull
-    private Collection<Role> roles;
+    private List<Role> roles;
 }
