@@ -2,8 +2,12 @@ package com.divanov.telrosApp.entities;
 
 import lombok.Data;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -17,5 +21,5 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private List<UserApp> users;
+    private List<UserApp> users = new ArrayList<>();
 }

@@ -79,9 +79,6 @@ public class AddNewUserDialog extends Dialog {
         }
     }
 
-    //    public void setUser(UserApp user) {
-//        binder.setBean(user);
-//    }
     public void setUser(UserApp userApp) {
         this.userApp = userApp;
         binder.readBean(userApp);
@@ -104,12 +101,8 @@ public class AddNewUserDialog extends Dialog {
         }
     }
 
-//    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
-//        return addListener(SaveEvent.class, listener);
-//    }
-
-    public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
-        return getEventBus().addListener(eventType, listener);
+    public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
+        return addListener(SaveEvent.class, listener);
     }
 }
 

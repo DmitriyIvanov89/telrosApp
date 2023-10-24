@@ -13,7 +13,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * method addClassName makes it easier to styling components using CSS
@@ -118,7 +117,7 @@ public class AdminView extends VerticalLayout {
 
     private void configureDialog() {
         dialog = new AddNewUserDialog(service.findAllRoles());
-        dialog.addListener(AddNewUserDialog.SaveEvent.class, this::saveNewUserDialog);
+        dialog.addSaveListener(this::saveNewUserDialog);
     }
 
     private void saveNewUserDialog(AddNewUserDialog.SaveEvent event) {
