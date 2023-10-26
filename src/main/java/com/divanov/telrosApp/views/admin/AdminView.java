@@ -132,12 +132,17 @@ public class AdminView extends VerticalLayout {
 
     private void complicateNewUser(UserApp userApp) {
         if (userApp == null) {
-            dialog.setUser(null);
-            dialog.close();
+            closeDialog();
         } else {
             dialog.setUser(userApp);
             dialog.setVisible(true);
         }
+    }
+
+    private void closeDialog() {
+        dialog.setUser(null);
+        dialog.setVisible(false);
+        dialog.close();
     }
 
     private void updateList() {
