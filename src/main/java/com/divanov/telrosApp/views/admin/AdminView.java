@@ -37,7 +37,7 @@ public class AdminView extends VerticalLayout {
 
         add(getToolBar(), getContent());
         updateList();
-        closeEditor();
+        closeEditForm();
     }
 
     private void configureGrid() {
@@ -46,7 +46,7 @@ public class AdminView extends VerticalLayout {
         grid.setColumns("firstName", "lastName", "patronymic", "dateOfBirth", "email", "phone");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
 
-        grid.asSingleSelect().addValueChangeListener(event -> editUserData(event.getValue()));
+        grid.asSingleSelect().addValueChangeListener(event -> editUserDataForEditForm(event.getValue()));
 
     }
 
@@ -77,32 +77,32 @@ public class AdminView extends VerticalLayout {
     private void configureForm() {
         form = new UserAppEditDataForm(service.findAllRoles());
         form.setWidth("25em");
-        form.addSaveListener(this::saveUserForm);
-        form.addDeleteListener(this::deleteUserForm);
-        form.addCancelListener(e -> closeEditor());
+        form.addSaveListener(this::saveUserDataInEditForm);
+        form.addDeleteListener(this::deleteUserDataInEditForm);
+        form.addCancelListener(e -> closeEditForm());
     }
 
-    private void saveUserForm(UserAppEditDataForm.SaveEvent event) {
+    private void saveUserDataInEditForm(UserAppEditDataForm.SaveEvent event) {
         service.saveUser(event.getUserApp());
         updateList();
-        closeEditor();
+        closeEditForm();
     }
 
-    private void deleteUserForm(UserAppEditDataForm.DeleteEvent event) {
+    private void deleteUserDataInEditForm(UserAppEditDataForm.DeleteEvent event) {
         service.deleteUser(event.getUserApp());
         updateList();
-        closeEditor();
+        closeEditForm();
     }
 
-    private void closeEditor() {
+    private void closeEditForm() {
         form.setUser(null);
         form.setVisible(false);
         removeClassName("editing");
     }
 
-    private void editUserData(UserApp userApp) {
+    private void editUserDataForEditForm(UserApp userApp) {
         if (userApp == null) {
-            closeEditor();
+            closeEditForm();
         } else {
             form.setUser(userApp);
             form.setVisible(true);
@@ -117,10 +117,10 @@ public class AdminView extends VerticalLayout {
 
     private void configureDialog() {
         dialog = new AddNewUserDialog(service.findAllRoles());
-        dialog.addSaveListener(this::saveNewUserDialog);
+        dialog.addSaveListener(this::saveNewUserInDialog);
     }
 
-    private void saveNewUserDialog(AddNewUserDialog.SaveEvent event) {
+    private void saveNewUserInDialog(AddNewUserDialog.SaveEvent event) {
         service.saveUser(event.getUserApp());
         updateList();
         dialog.close();

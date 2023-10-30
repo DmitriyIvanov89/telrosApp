@@ -5,8 +5,6 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -39,10 +37,8 @@ public class UserApp {
     @Column(name = "phone")
     private String phone;
 
-    @ManyToMany
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     @NotNull
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Role role;
 }
