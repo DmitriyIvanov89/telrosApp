@@ -45,7 +45,6 @@ public class UserAppEditDataForm extends FormLayout {
         role.setItemLabelGenerator(Role::getName);
 
         add(username, password, firstName, lastName, patronymic, dateOfBirth, email, phone, role, createButtonsLayout());
-
     }
 
     public void setUser(UserApp user) {

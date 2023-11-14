@@ -22,35 +22,53 @@ import lombok.Getter;
 import java.util.List;
 
 public class AddNewUserDialog extends Dialog {
+    FormLayout dialogLayout;
     UserApp userApp;
 
-    TextField userName = new TextField("Username");
-    PasswordField password = new PasswordField("Password");
-    TextField firstName = new TextField("First Name");
-    TextField lastName = new TextField("Last Name");
-    TextField patronymic = new TextField("Patronymic");
-    EmailField email = new EmailField("Email");
-    TextField dateOfBirth = new TextField("Date of Birth");
-    TextField phone = new TextField("Phone");
-    ComboBox<Role> role = new ComboBox<>("Role");
+    TextField userName;
+    PasswordField password;
+    TextField firstName;
+    TextField lastName;
+    TextField patronymic;
+    EmailField email;
+    TextField dateOfBirth;
+    TextField phone;
+    ComboBox<Role> role;
 
     Binder<UserApp> binder = new BeanValidationBinder<>(UserApp.class);
 
     public AddNewUserDialog(List<Role> roles) {
         setClassName("addNewUserDialog");
         setHeaderTitle("Add New User");
+
+        dialogLayout = new FormLayout();
+        userName = new TextField("Username");
+        password = new PasswordField("Password");
+        firstName = new TextField("First Name");
+        lastName = new TextField("Last Name");
+        patronymic = new TextField("Patronymic");
+        email = new EmailField("Email");
+        dateOfBirth = new TextField("Date of Birth");
+        phone = new TextField("Phone");
+        role = new ComboBox<>("Role");
+
+        email.setHelperText("Format: xxx@xxx.xx");
+        dateOfBirth.setHelperText("Format: yyyy-mm-dd");
+        phone.setHelperText("Format: +7(xxxX)xx-xx-xx");
+
+        dialogLayout.add(userName, password, firstName, lastName, patronymic, email, dateOfBirth, phone, role);
+        add(dialogLayout);
+
         binder.bindInstanceFields(this);
+
         role.setItems(roles);
         role.setItemLabelGenerator(Role::getName);
+
         getFooter().add(createSaveButton());
         getFooter().add(createCancelButton(this));
+
         setResizable(true);
         setDraggable(true);
-        add(createLayout());
-    }
-
-    private FormLayout createLayout() {
-        return new FormLayout(userName, password, firstName, lastName, patronymic, email, dateOfBirth, phone, role);
     }
 
     private Button createSaveButton() {
@@ -99,6 +117,7 @@ public class AddNewUserDialog extends Dialog {
         SaveEvent(AddNewUserDialog source, UserApp userApp) {
             super(source, userApp);
         }
+
     }
 
     public Registration addSaveListener(ComponentEventListener<SaveEvent> listener) {
