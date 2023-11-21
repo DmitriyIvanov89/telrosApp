@@ -16,7 +16,7 @@ public class UserApp {
 
     @Column(name = "username")
     @NotEmpty
-    @Pattern(regexp = "^[\\w+\\-]{3,50}", message = "Only Latin letters, '_' and numbers. Min 3 and Max 50 symbols")
+    @Pattern(regexp = "^[\\w+\\-]{2,50}", message = "Only Latin letters, '_' and numbers. Min 3 and Max 50 symbols")
     private String username;
 
     @Column(name = "password")
@@ -26,16 +26,16 @@ public class UserApp {
 
     @Column(name = "first_name")
     @NotEmpty
-    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){3,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
+    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){2,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
     private String firstName;
 
     @Column(name = "last_name")
     @NotEmpty
-    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){3,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
+    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){2,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
     private String lastName;
 
     @Column(name = "patronymic")
-    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){3,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
+    @Pattern(regexp = "^([A-ZА-Я]{1}[a-zа-я\\-]+)([A-ZА-Яa-zа-я]+){2,50}", message = "Only letters and '-'. The first letter must be capitalized. Min 3 and Max 50 symbols")
     private String patronymic;
 
     @Column(name = "birth_date")

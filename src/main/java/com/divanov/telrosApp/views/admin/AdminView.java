@@ -29,7 +29,7 @@ public class AdminView extends VerticalLayout {
 
     public AdminView(UserService service) {
         this.service = service;
-        addClassName("list-view");
+        addClassName("admin-list-view");
         setSizeFull();
         configureGrid();
         configureForm();
@@ -38,20 +38,21 @@ public class AdminView extends VerticalLayout {
         add(getToolBar(), getContent());
         updateList();
         closeEditForm();
+
+        grid.asSingleSelect().addValueChangeListener(event ->
+                editUserDataForEditForm(event.getValue()));
+
     }
 
     private void configureGrid() {
-        grid.addClassNames("user-grid");
+        grid.addClassNames("admin-list-grid");
         grid.setSizeFull();
         grid.setColumns("firstName", "lastName", "patronymic", "dateOfBirth", "email", "phone");
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
-
-        grid.asSingleSelect().addValueChangeListener(event -> editUserDataForEditForm(event.getValue()));
-
     }
 
     private HorizontalLayout getToolBar() {
-        filterText.setPlaceholder("First or Last name");
+        filterText.setPlaceholder("First or Last Name");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateList());
@@ -97,7 +98,7 @@ public class AdminView extends VerticalLayout {
     private void closeEditForm() {
         form.setUser(null);
         form.setVisible(false);
-        removeClassName("editing");
+        removeClassName("editing-form");
     }
 
     private void editUserDataForEditForm(UserApp userApp) {
@@ -106,13 +107,13 @@ public class AdminView extends VerticalLayout {
         } else {
             form.setUser(userApp);
             form.setVisible(true);
-            addClassName("editing");
+            addClassName("editing-form");
         }
     }
 
     /**
      * Create and config dialog component
-     * only fot add new user
+     * only for add new user
      */
 
     private void configureDialog() {
@@ -136,12 +137,14 @@ public class AdminView extends VerticalLayout {
         } else {
             dialog.setUser(userApp);
             dialog.setVisible(true);
+            addClassName("editing-dialog");
         }
     }
 
     private void closeDialog() {
         dialog.setUser(null);
         dialog.setVisible(false);
+        removeClassName("editing-dialog");
         dialog.close();
     }
 

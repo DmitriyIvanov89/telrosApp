@@ -24,7 +24,6 @@ import java.util.List;
 public class AddNewUserDialog extends Dialog {
     FormLayout dialogLayout;
     UserApp userApp;
-
     TextField userName;
     PasswordField password;
     TextField firstName;
@@ -54,7 +53,7 @@ public class AddNewUserDialog extends Dialog {
 
         email.setHelperText("Format: xxx@xxx.xx");
         dateOfBirth.setHelperText("Format: yyyy-mm-dd");
-        phone.setHelperText("Format: +7(xxxX)xx-xx-xx");
+        phone.setHelperText("Format: +7(xxx)xx-xx-xx");
 
         dialogLayout.add(userName, password, firstName, lastName, patronymic, email, dateOfBirth, phone, role);
         add(dialogLayout);
@@ -76,9 +75,7 @@ public class AddNewUserDialog extends Dialog {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         save.addClickShortcut(Key.ENTER);
         save.addClickListener(event -> validateAndSave());
-
         binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
-
         return save;
     }
 

@@ -15,40 +15,63 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import lombok.Getter;
 
 import java.util.List;
 
 public class UserAppEditDataForm extends FormLayout {
-    TextField username = new TextField("Username");
-    PasswordField password = new PasswordField("Password");
-    TextField firstName = new TextField("First Name");
-    TextField lastName = new TextField("Last Name");
-    TextField patronymic = new TextField("Patronymic");
-    TextField dateOfBirth = new TextField("Date Of Birth");
-    EmailField email = new EmailField("Email");
-    TextField phone = new TextField("Phone");
-    ComboBox<Role> role = new ComboBox<>("Role");
+    UserApp user;
+    TextField username;
+    PasswordField password;
+    TextField firstName;
+    TextField lastName;
+    TextField patronymic;
+    TextField dateOfBirth;
+    EmailField email;
+    TextField phone;
+    ComboBox<Role> role;
+    Button saveButton;
+    Button cancelButton;
+    Button deleteButton;
 
     Binder<UserApp> binder = new BeanValidationBinder<>(UserApp.class);
 
-    Button saveButton = new Button("Save");
-    Button cancelButton = new Button("Cancel");
-    Button deleteButton = new Button("Delete");
-
     public UserAppEditDataForm(List<Role> roles) {
         addClassName("UserAppEditDataForm");
+
+        username = new TextField("Username");
+        password = new PasswordField("Password");
+        firstName = new TextField("First Name");
+        lastName = new TextField("Last Name");
+        patronymic = new TextField("Patronymic");
+        dateOfBirth = new TextField("Date Of Birth");
+        email = new EmailField("Email");
+        phone = new TextField("Phone");
+        role = new ComboBox<>("Role");
+        saveButton = new Button("Save");
+        cancelButton = new Button("Cancel");
+        deleteButton = new Button("Delete");
+
         binder.bindInstanceFields(this);
 
         role.setItems(roles);
         role.setItemLabelGenerator(Role::getName);
 
-        add(username, password, firstName, lastName, patronymic, dateOfBirth, email, phone, role, createButtonsLayout());
+        add(createEditDataFormLayout(), createButtonsLayout());
     }
 
     public void setUser(UserApp user) {
-        binder.setBean(user);
+        this.user = user;
+        binder.readBean(user);
+    }
+
+    private FormLayout createEditDataFormLayout() {
+        email.setHelperText("Format: xxx@xxx.xx");
+        dateOfBirth.setHelperText("Format: yyyy-mm-dd");
+        phone.setHelperText("Format: +7(xxx)xx-xx-xx");
+        return new FormLayout(username, password, firstName, lastName, patronymic, dateOfBirth, email, phone, role);
     }
 
     private HorizontalLayout createButtonsLayout() {
@@ -69,8 +92,11 @@ public class UserAppEditDataForm extends FormLayout {
     }
 
     private void validateAndSave() {
-        if (binder.isValid()) {
-            fireEvent(new SaveEvent(this, binder.getBean()));
+        try {
+            binder.writeBean(user);
+            fireEvent(new SaveEvent(this, user));
+        } catch (ValidationException e) {
+            e.printStackTrace();
         }
     }
 

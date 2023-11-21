@@ -1,6 +1,6 @@
 @media all and (max-width: 1100px) {
-    .list-view.editing .toolbar,
-    .list-view.editing .user-grid {
-        display: none;
-    }
+  .admin-list-view.editing-form .toolbar,
+  .admin-list-view.editing-form .admin-list-grid {
+    display: none;
+  }
 }
