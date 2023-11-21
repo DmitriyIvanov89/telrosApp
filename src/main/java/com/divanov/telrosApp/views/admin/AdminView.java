@@ -2,6 +2,7 @@ package com.divanov.telrosApp.views.admin;
 
 import com.divanov.telrosApp.entities.UserApp;
 import com.divanov.telrosApp.services.UserService;
+import com.divanov.telrosApp.views.MainLayout;
 import com.divanov.telrosApp.views.component.AddNewUserDialog;
 import com.divanov.telrosApp.views.component.UserAppEditDataForm;
 import com.vaadin.flow.component.Component;
@@ -18,8 +19,8 @@ import com.vaadin.flow.router.Route;
  * method addClassName makes it easier to styling components using CSS
  */
 
-@Route(value = "")
-@PageTitle("Admin dashboard")
+@Route(value = "", layout = MainLayout.class)
+@PageTitle("Admin dashboard | Telros CRM")
 public class AdminView extends VerticalLayout {
     Grid<UserApp> grid = new Grid<>(UserApp.class);
     TextField filterText = new TextField();
