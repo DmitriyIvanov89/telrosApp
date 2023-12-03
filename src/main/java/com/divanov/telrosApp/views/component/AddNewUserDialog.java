@@ -37,7 +37,7 @@ public class AddNewUserDialog extends Dialog {
     Binder<UserApp> binder = new BeanValidationBinder<>(UserApp.class);
 
     public AddNewUserDialog(List<Role> roles) {
-        setClassName("addNewUserDialog");
+        setClassName("new-user-dialog");
         setHeaderTitle("Add New User");
 
         dialogLayout = new FormLayout();
