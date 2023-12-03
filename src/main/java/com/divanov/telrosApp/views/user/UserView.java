@@ -13,7 +13,7 @@ import com.vaadin.flow.router.Route;
 import javax.annotation.security.PermitAll;
 
 @PermitAll
-@Route(value = "user")
+@Route(value = "user", layout = UserLayout.class)
 @PageTitle("User info page | Telros CRM")
 public class UserView extends HorizontalLayout {
     TextField userName;
