@@ -15,13 +15,11 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import javax.annotation.security.PermitAll;
-
 /**
  * method addClassName makes it easier to styling components using CSS
  */
 
-@PermitAll
+
 @Route(value = "", layout = MainLayout.class)
 @PageTitle("Admin dashboard | Telros CRM")
 public class AdminView extends VerticalLayout {

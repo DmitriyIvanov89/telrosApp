@@ -2,6 +2,7 @@ package com.divanov.telrosApp.views.user;
 
 ;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -12,9 +13,10 @@ import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.PermitAll;
 
-@PermitAll
+
 @Route(value = "user", layout = UserLayout.class)
 @PageTitle("User info page | Telros CRM")
+@PermitAll
 public class UserView extends HorizontalLayout {
     TextField userName;
     PasswordField password;
@@ -43,8 +45,10 @@ public class UserView extends HorizontalLayout {
         save = createSaveButton();
         delete = createDeleteButton();
 
-        add(createFieldsLayout(), createButtonsLayout());
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        HorizontalLayout buttonLayout = new HorizontalLayout(save, delete);
+
+        add(createFieldsLayout(), buttonLayout);
+        setAlignItems(Alignment.END);
     }
 
     private HorizontalLayout createFieldsLayout() {
@@ -63,19 +67,15 @@ public class UserView extends HorizontalLayout {
         return credentialsLayout;
     }
 
-    private HorizontalLayout createButtonsLayout() {
-        HorizontalLayout layout = new HorizontalLayout(save, delete);
-        layout.setPadding(true);
-        layout.setDefaultVerticalComponentAlignment(Alignment.END);
-        layout.setJustifyContentMode(JustifyContentMode.END);
-        return layout;
-    }
-
     private Button createSaveButton() {
-        return new Button("Save");
+        Button save = new Button("Save");
+        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        return save;
     }
 
     private Button createDeleteButton() {
-        return new Button("Delete");
+        Button delete = new Button("Delete");
+        delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        return delete;
     }
 }

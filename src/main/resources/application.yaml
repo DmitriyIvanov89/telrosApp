@@ -4,22 +4,29 @@ server:
     context-path: /telros
 spring:
   datasource:
-    url: jdbc:h2:file:./users;MODE=PostgreSQL
-    #url: jdbc:h2:mem:testdb;MODE=PostgreSQL
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=telros
+    username: postgres
+    password: 1488
+#    url: jdbc:h2:file:./users;MODE=PostgreSQL
+#    url: jdbc:h2:mem:testdb;MODE=PostgreSQL
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
   jpa:
     show-sql: true
     #defer-datasource-initialization: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        #ddl-auto: none
-  h2:
-    console:
-      enabled: true
-      path: /h2
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        temp:
+          user_jdbc_metadata_defaults: false
+#        dialect: org.hibernate.dialect.H2Dialect
+#        ddl-auto: none
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2
 
 # Launch the default browser when starting the application in development mode
 #vaadin:

@@ -1,5 +1,6 @@
 package com.divanov.telrosApp.views.user;
 
+import com.divanov.telrosApp.security.SecurityService;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -11,8 +12,10 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 
 public class UserLayout extends AppLayout {
+    SecurityService service;
 
-    public UserLayout() {
+    public UserLayout(SecurityService service) {
+        this.service = service;
         createHeader();
         createDrawer();
     }
@@ -20,7 +23,7 @@ public class UserLayout extends AppLayout {
     private void createHeader() {
         DrawerToggle toggle = new DrawerToggle();
 
-        H1 logo = new H1("Vaadin CRM | User Info");
+        H1 logo = new H1("Telros CRM");
         logo.addClassNames("text-l", "m-m");
 
         Button logOut = new Button("Log out");
@@ -40,7 +43,7 @@ public class UserLayout extends AppLayout {
     }
 
     private void createDrawer() {
-        RouterLink userViewLink = new RouterLink("User Info", UserView.class);
+        RouterLink userViewLink = new RouterLink(service.getAuthenticatedUser().getUsername(), UserView.class);
         userViewLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         addToDrawer(new VerticalLayout(
